@@ -1,0 +1,35 @@
+---
+- hosts: all
+
+
+  tasks:
+    - name: Atualizando pacotes e criando a pasta de trabalho
+      shell: "sudo apt-get update -y && sudo apt-get upgrade -y && sudo mkdir /teste"
+      become: yes
+
+    - name: Instalando o docker
+      apt:
+        name: docker
+        state: latest
+      become: yes
+
+    - name: Instalando o docker.io
+      apt:
+        name: docker.io
+        state: latest
+      become: yes
+
+    - name: Copiando o aquivo Java para aws
+      copy:
+        src: "/home/tec/projects/terraformAWS/dev3/ansible/docker/HelloWorld.class"
+        dest: /teste
+      become: yes
+
+    - name: Copiando o aquivo Dokerfile para aws
+      copy:
+        src: "/home/tec/projects/terraformAWS/dev3/ansible/docker/Dockerfile.yml"
+        dest: /teste
+      become: yes
+    - name: Buildando a imagem e rodando a aplicação
+      shell: cd /teste && docker build -t hello-world -f Dockerfile.yml . && docker run hello-world
+      become: yes
